@@ -1,6 +1,6 @@
 <?php
 
-namespace Noob\Core;
+namespace Noob\Core\Exception;
 
 /**
  * InvalidArgumentTypeException

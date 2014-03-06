@@ -31,7 +31,7 @@ class ParameterCollection extends \ArrayObject {
     /**
      * Get item by key
      *
-     * Return the given default value not found
+     * Return the given default value if not found
      *
      * @param mixed $key
      * @param mixed $default
