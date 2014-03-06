@@ -1,0 +1,14 @@
+{
+    "name":"sam-adam/noob-framework",
+    "require":{
+        "php":">=5.4.0"
+    },
+    "suggest":{
+        "monolog/monolog":"*"
+    },
+    "autoload":{
+        "psr-0":{
+            "Noob":"src/"
+        }
+    }
+}
