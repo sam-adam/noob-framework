@@ -1,7 +1,8 @@
 <?php
 
 namespace Noob\Http\Request;
-use Noob\Core\InvalidArgumentTypeException;
+
+use Noob\Core\Exception\InvalidArgumentTypeException;
 
 /**
  * Class Request
@@ -31,6 +32,9 @@ class Request {
 
     /** @var ParameterCollection */
     protected $postParams;
+
+    /** @var ParameterCollection */
+    protected $serverParams;
 
     /**
      * Return the method of this request
@@ -102,7 +106,15 @@ class Request {
         return $this;
     }
 
-    public function addQuery($key, $value) {
+    /**
+     * Add a new query item to the request
+     *
+     * @param string $key
+     * @param array $value
+     * @return Request
+     * @throws \Noob\Core\Exception\InvalidArgumentTypeException
+     */
+    public function addQuery($key, array $value) {
         if(!is_string($key)) {
             throw new InvalidArgumentTypeException('string', $key);
         }
