@@ -15,6 +15,15 @@ class ParameterCollection extends \ArrayObject {
     }
 
     /**
+     * Return the parameters
+     *
+     * @return array an Array of parameters
+     */
+    public function all() {
+        return $this;
+    }
+
+    /**
      * Get item by key
      *
      * Return null if item is not found
@@ -52,5 +61,14 @@ class ParameterCollection extends \ArrayObject {
         $this[$key] = $value;
 
         return $this;
+    }
+
+    /**
+     * Return the parameter keys
+     *
+     * @return array an Array of parameter keys
+     */
+    public function keys() {
+        return array_keys($this);
     }
 }
