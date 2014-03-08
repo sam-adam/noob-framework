@@ -28,7 +28,7 @@ class FileCollection extends ParameterCollection {
      * @param array $files
      */
     public function replaceCollection(array $files = array()) {
-        parent::__construct(array());
+        parent::exchangeArray(array());
         $this->add($files);
     }
 
