@@ -71,4 +71,15 @@ class ParameterCollection extends \ArrayObject {
     public function keys() {
         return array_keys($this);
     }
+
+    /**
+     * Remove parameter by key
+     *
+     * @param $key
+     */
+    public function removeKey($key) {
+        if(!is_null($this->offsetGet($key))) {
+            unset($this[$key]);
+        }
+    }
 }
