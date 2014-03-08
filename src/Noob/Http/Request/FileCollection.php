@@ -8,6 +8,8 @@
 
 namespace Noob\Http\Request;
 
+use Noob\Http\File\UploadedFile;
+
 /**
  * Class FileCollection
  * @package Noob\Http\Request\
@@ -86,7 +88,7 @@ class FileCollection extends ParameterCollection {
         } else {
             $file = array_walk($file, array($this, 'convertToUploadedFile'));
         }
-        
+
         return $file;
     }
 } 
