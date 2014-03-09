@@ -114,8 +114,8 @@ class Request {
      * @return mixed|ParameterCollection
      */
     public function getQuery($key = null, $default = null) {
-        if($this->queryParams === null) {
-            $this->queryParams = new ParameterCollection();
+        if($this->queryCollection === null) {
+            $this->queryCollection = new ParameterCollection();
         }
 
         if($key === null) {
@@ -132,7 +132,7 @@ class Request {
      * @return Request
      */
     public function setQuery(ParameterCollection $query) {
-        $this->queryParams = $query;
+        $this->queryCollection = $query;
 
         return $this;
     }
