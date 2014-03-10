@@ -21,4 +21,17 @@ class Enforce {
             throw new NullArgumentException($argumentName, 'Cannot be null');
         }
     }
+
+    /**
+     * Enforce the given string argument is not empty
+     *
+     * @param string $argument
+     * @param string $argumentName
+     * @throws \InvalidArgumentException
+     */
+    public static function ArgumentNotNullOrEmpty($argument, $argumentName) {
+        if($argument === null || $argument === '') {
+            throw new \InvalidArgumentException($argumentName.' cannot be null or empty');
+        }
+    }
 } 

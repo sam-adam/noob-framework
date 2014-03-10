@@ -3,6 +3,7 @@
 namespace Noob\Inject\Binding\Metadata;
 
 use Noob\Core\Enforce;
+use Noob\Inject\Module\BaseModule;
 
 class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface {
     private $name;
@@ -33,6 +34,8 @@ class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface
      * @param string $name
      */
     function setBindingName($name) {
+        Enforce::ArgumentNotNullOrEmpty($name, 'name');
+
         $this->name = $name;
     }
 
@@ -43,6 +46,8 @@ class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface
      * @return bool
      */
     function has($key) {
+        Enforce::ArgumentNotNullOrEmpty($key, 'key');
+
         return $this->offsetExists($key);
     }
 
@@ -55,6 +60,8 @@ class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface
      * @return mixed
      */
     function get($key, $default = null) {
+        Enforce::ArgumentNotNullOrEmpty($key, 'key');
+
         return $this->has($key)
             ? $this->offsetGet($key)
             : $default;
@@ -67,6 +74,9 @@ class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface
      * @param mixed $value
      */
     function set($key, $value) {
+        Enforce::ArgumentNotNullOrEmpty($key, 'key');
+        Enforce::ArgumentNotNull($value, 'value');
+
         $this[$key] = $value;
     }
 }
