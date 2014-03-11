@@ -22,13 +22,13 @@ class Request {
     const CONNECT   = 'CONNECT';
 
     /** @var  httpVersion */
-    protected $httpVersion = 'HTTP/1.1';
+    protected $httpVersion;
 
     /** @var string */
-    protected $method = Request::GET;
+    protected $method;
 
     /** @var string */
-    protected $uri = '/';
+    protected $uri;
 
     /** @var ParameterCollection ($_GET) */
     protected $queryCollection;
@@ -52,11 +52,17 @@ class Request {
     protected $body = [];
 
     public function __construct(
-        array $query = [],
-        array $post = [],
-        array $cookie = [],
-        array $files = [],
-        array $server = []) {
+        $httpVersion,
+        $method,
+        $uri,
+        array $query,
+        array $post,
+        array $cookie,
+        array $files,
+        array $server) {
+        $this->httpVersion = $httpVersion;
+        $this->method = $method;
+        $this->uri = $uri;
         $this->queryCollection = new ParameterCollection($query);
         $this->postCollection = new ParameterCollection($post);
         $this->cookieCollection = new ParameterCollection($cookie);
@@ -64,13 +70,10 @@ class Request {
         $this->serverCollection = new ServerCollection($server);
         $this->headerCollection = new HeaderCollection($this->serverCollection->getHeaders());
 
-        $this->method = $this->serverCollection['REQUEST_METHOD'];
-        $this->uri = $this->serverCollection['REQUEST_URI'];
-
-        if ($this->method === Request::POST
+        if ($this->getMethod() === Request::POST
             ||
-            $this->method === Request::PUT) {
-            parse_str(file_get_contents('php://input'), $body);
+            $this->getMethod() === Request::PUT) {
+            parse_str(file_get_contents('php://input'), $this->body);
         }
     }
 
@@ -203,5 +206,30 @@ class Request {
             strtolower($this->serverCollection['HTTP_X_REQUEST_WITH']) === 'xmlhttprequest';
     }
 
+    /**
+     * Create request from global variable
+     *
+     * @return Request An Request created from globals variable
+     */
+    public static function createFromGlobals() {
+        $httpVersion = 'HTTP/1.1';
+        $method = $_SERVER['REQUEST_METHOD'];
+        $uri = '/';
+
+        return new Request(
+            $httpVersion,
+            $method,
+            $uri,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            $_FILES,
+            $_SERVER
+        );
+    }
+
+    public static function createFromString($url) {
+
+    }
 
 }
