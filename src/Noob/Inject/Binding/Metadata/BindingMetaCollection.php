@@ -3,7 +3,6 @@
 namespace Noob\Inject\Binding\Metadata;
 
 use Noob\Core\Enforce;
-use Noob\Inject\Module\BaseModule;
 
 class BindingMetaCollection extends \ArrayObject implements BindingMetaInterface {
     private $name;
