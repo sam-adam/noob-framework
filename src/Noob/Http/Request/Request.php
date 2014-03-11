@@ -21,6 +21,9 @@ class Request {
     const TRACE     = 'TRACE';
     const CONNECT   = 'CONNECT';
 
+    /** @var  httpVersion */
+    protected $httpVersion = 'HTTP/1.1';
+
     /** @var string */
     protected $method = Request::GET;
 
@@ -34,41 +37,47 @@ class Request {
     protected $postCollection;
 
     /** @var FileCollection ($_FILES) */
-    protected $fileCollection = [];
+    protected $fileCollection;
 
     /** @var  ParameterCollection ($_COOKIE) */
-    protected $cookieCollection = [];
+    protected $cookieCollection;
 
     /** @var ParameterCollection ($_SERVER) */
-    protected $serverCollection = [];
+    protected $serverCollection;
 
     /** @var  HeaderCollection taken from $_SERVER */
-    protected $headerCollection = [];
+    protected $headerCollection;
 
-    /** @var  httpVersion */
-    protected $httpVersion = 'HTTP/1.1';
-
-    /** @var  content */
-    protected $content = null;
+    /** @var  body */
+    protected $body = [];
 
     public function __construct(
-        array $queryParams = [],
-        array $postParams = [],
-        array $cookieParams = [],
-        array $fileParams = [],
-        array $serverParams = [],
-        $content = null) {
-        $this->queryCollection = new ParameterCollection($queryParams);
-        $this->postCollection = new ParameterCollection($postParams);
-        $this->cookieCollection = new ParameterCollection($cookieParams);
-        $this->fileCollection = new FileCollection($fileParams);
-        $this->serverCollection = new ServerCollection($serverParams);
+        array $query = [],
+        array $post = [],
+        array $cookie = [],
+        array $files = [],
+        array $server = []) {
+        $this->queryCollection = new ParameterCollection($query);
+        $this->postCollection = new ParameterCollection($post);
+        $this->cookieCollection = new ParameterCollection($cookie);
+        $this->fileCollection = new FileCollection($files);
+        $this->serverCollection = new ServerCollection($server);
         $this->headerCollection = new HeaderCollection($this->serverCollection->getHeaders());
-        $this->content = $content;
+
+        $this->method = $this->serverCollection['REQUEST_METHOD'];
+        $this->uri = $this->serverCollection['REQUEST_URI'];
+
+        if ($this->method === Request::POST
+            ||
+            $this->method === Request::PUT) {
+            parse_str(file_get_contents('php://input'), $body);
+        }
     }
 
     /**
      * Return the method of this request
+     * or
+     * Method from setMethod
      *
      * @return string
      */
@@ -95,10 +104,16 @@ class Request {
         return $this;
     }
 
+    /**
+     * @return string An uri string
+     */
     public function getUri() {
         return $this->uri;
     }
 
+    /**
+     * @param $uri Set uri string
+     */
     public function setUri($uri) {
         $this->uri = $uri;
     }
@@ -119,10 +134,10 @@ class Request {
         }
 
         if($key === null) {
-            return $this->queryParams;
+            return $this->queryCollection;
         }
 
-        return $this->queryParams->get($key, $default);
+        return $this->queryCollection->get($key, $default);
     }
 
     /**
@@ -156,4 +171,37 @@ class Request {
 
         return $this;
     }
+
+    /**
+     * @return Host
+     */
+    public function getHost() {
+        return $this->headerCollection['Host'];
+    }
+
+    /**
+     * @return UserAgent
+     */
+    public function getUserAgent() {
+        return $this->headerCollection['User-Agent'];
+    }
+
+    /**
+     * @return REMOTE_ADDR
+     */
+    public function getRemoteAddr() {
+        return $this->serverCollection['REMOTE_ADDR'];
+    }
+
+    /**
+     * @return bool Check if the request is ajax
+     */
+    public function isAjax() {
+        return
+            isset($this->serverCollection['HTTP_X_REQUEST_WITH'])
+            &&
+            strtolower($this->serverCollection['HTTP_X_REQUEST_WITH']) === 'xmlhttprequest';
+    }
+
+
 }

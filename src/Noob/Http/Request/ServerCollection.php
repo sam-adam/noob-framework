@@ -21,19 +21,6 @@ class ServerCollection extends ParameterCollection {
     public function getHeaders() {
         parent::exchangeArray($headers = array());
 
-        $contentHeaders = [
-            'CONTENT-LENGTH' => true,
-            'CONTENT-TYPE' => true
-        ];
-
-        foreach ($this as $key => $value) {
-            if (strpos($key, 'HTTP_')) {
-                $headers[substr($key, 5)] = $value;
-            } elseif (isset($contentHeaders[$key])) {
-                $headers[$key] = $value;
-            }
-        }
-
         /**
          * Check if the user is authorized
          * will populate from HTTP_AUTHORIZATION
@@ -68,7 +55,10 @@ class ServerCollection extends ParameterCollection {
             $headers['AUTHORIZATION'] = $headers['PHP_AUTH_DIGEST'];
         }
 
-        return $headers;
+        /**
+         * Merge all headers with authorization information
+         */
+        return getallheaders() + $headers;
     }
 
 } 
