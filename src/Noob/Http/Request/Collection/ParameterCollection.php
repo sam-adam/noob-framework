@@ -1,6 +1,6 @@
 <?php
 
-namespace Noob\Http\Request;
+namespace Noob\Http\Request\Collection;
 
 class ParameterCollection extends \ArrayObject {
     /**
@@ -81,5 +81,15 @@ class ParameterCollection extends \ArrayObject {
         if(!is_null($this->offsetGet($key))) {
             unset($this[$key]);
         }
+    }
+
+    /**
+     * Add additional parameters
+     *
+     * @param array $parameters An additional parameters
+     */
+    public function addParameters(array $parameters) {
+
+        $this->append($parameters);
     }
 }

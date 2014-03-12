@@ -6,7 +6,7 @@
  * Time: 9:21 AM
  */
 
-namespace Noob\Http\Request;
+namespace Noob\Http\Request\Collection;
 
 use Noob\Http\File\UploadedFile;
 

@@ -3,6 +3,10 @@
 namespace Noob\Http\Request;
 
 use Noob\Core\Exception\InvalidArgumentTypeException;
+use Noob\Http\Request\Collection\ParameterCollection;
+use Noob\Http\Request\Collection\HeaderCollection;
+use Noob\Http\Request\Collection\FileCollection;
+use Noob\Http\Request\Collection\ServerCollection;
 
 /**
  * Class Request
@@ -49,20 +53,21 @@ class Request {
     protected $headerCollection;
 
     /** @var  body */
-    protected $body = [];
+    protected $body;
 
     public function __construct(
-        $httpVersion,
         $method,
         $uri,
-        array $query,
-        array $post,
-        array $cookie,
-        array $files,
-        array $server) {
+        $httpVersion = 'HTTP/1.1',
+        array $query = [],
+        array $post = [],
+        array $cookie = [],
+        array $files = [],
+        array $server = []) {
         $this->httpVersion = $httpVersion;
         $this->method = $method;
         $this->uri = $uri;
+
         $this->queryCollection = new ParameterCollection($query);
         $this->postCollection = new ParameterCollection($post);
         $this->cookieCollection = new ParameterCollection($cookie);
@@ -73,7 +78,7 @@ class Request {
         if ($this->getMethod() === Request::POST
             ||
             $this->getMethod() === Request::PUT) {
-            parse_str(file_get_contents('php://input'), $this->body);
+            $this->body = file_get_contents('php://input');
         }
     }
 
@@ -122,25 +127,12 @@ class Request {
     }
 
     /**
-     * Get the query for this request
+     * Get query for this request
      *
-     * Return ParameterCollection if key is not defined,
-     * otherwise return the item with defined key
-     *
-     * @param mixed $key
-     * @param mixed $default
-     * @return mixed|ParameterCollection
+     * @return ParameterCollection
      */
-    public function getQuery($key = null, $default = null) {
-        if($this->queryCollection === null) {
-            $this->queryCollection = new ParameterCollection();
-        }
-
-        if($key === null) {
-            return $this->queryCollection;
-        }
-
-        return $this->queryCollection->get($key, $default);
+    public function getQuery() {
+        return $this->queryCollection;
     }
 
     /**
@@ -155,46 +147,26 @@ class Request {
         return $this;
     }
 
-    /**
-     * Add a new query item to the request
-     *
-     * @param string $key
-     * @param array $value
-     * @return Request
-     * @throws \Noob\Core\Exception\InvalidArgumentTypeException
-     */
-    public function addQuery($key, array $value) {
-        if(!is_string($key)) {
-            throw new InvalidArgumentTypeException('string', $key);
-        }
-
-        if(!is_array($value)) {
-            throw new InvalidArgumentTypeException('array', $value);
-        }
-
-        return $this;
+    public function getHeader() {
+        return $this->headerCollection;
     }
 
-    /**
-     * @return Host
-     */
-    public function getHost() {
-        return $this->headerCollection['Host'];
+    public function getPost() {
+        return $this->postCollection;
     }
 
-    /**
-     * @return UserAgent
-     */
-    public function getUserAgent() {
-        return $this->headerCollection['User-Agent'];
+    public function getCookie() {
+        return $this->cookieCollection;
     }
 
-    /**
-     * @return REMOTE_ADDR
-     */
-    public function getRemoteAddr() {
-        return $this->serverCollection['REMOTE_ADDR'];
+    public function getFile() {
+        return $this->fileCollection;
     }
+
+    public function getBody() {
+        return $this->body;
+    }
+
 
     /**
      * @return bool Check if the request is ajax
@@ -217,9 +189,9 @@ class Request {
         $uri = '/';
 
         return new Request(
-            $httpVersion,
             $method,
             $uri,
+            $httpVersion,
             $_GET,
             $_POST,
             $_COOKIE,

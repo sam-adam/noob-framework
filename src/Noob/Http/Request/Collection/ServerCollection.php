@@ -6,7 +6,7 @@
  * Time: 7:40 AM
  */
 
-namespace Noob\Http\Request;
+namespace Noob\Http\Request\Collection;
 
 
 class ServerCollection extends ParameterCollection {

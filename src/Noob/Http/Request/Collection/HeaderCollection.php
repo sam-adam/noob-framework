@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Noob\Http\Request;
+namespace Noob\Http\Request\Collection;
 
 
 class HeaderCollection extends ParameterCollection {
