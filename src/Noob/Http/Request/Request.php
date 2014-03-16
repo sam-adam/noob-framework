@@ -113,13 +113,6 @@ class Request {
     }
 
     /**
-     * @return string An uri string
-     */
-    public function getUri() {
-        return $this->uri;
-    }
-
-    /**
      * @param $uri Set uri string
      */
     public function setUri($uri) {
@@ -127,12 +120,10 @@ class Request {
     }
 
     /**
-     * Get query for this request
-     *
-     * @return ParameterCollection
+     * @return string An uri string
      */
-    public function getQuery() {
-        return $this->queryCollection;
+    public function getUri() {
+        return $this->uri;
     }
 
     /**
@@ -147,22 +138,56 @@ class Request {
         return $this;
     }
 
+    /**
+     * Get query for this request
+     *
+     * @return ParameterCollection
+     */
+    public function getQuery() {
+        return $this->queryCollection;
+    }
+
+    /**
+     * Get Header for this request
+     *
+     * @return HeaderCollection
+     */
     public function getHeader() {
         return $this->headerCollection;
     }
 
+    /**
+     * Get Post for this request
+     *
+     * @return ParameterCollection
+     */
     public function getPost() {
         return $this->postCollection;
     }
 
+    /**
+     * Get Cookie for this request
+     *
+     * @return ParameterCollection
+     */
     public function getCookie() {
         return $this->cookieCollection;
     }
 
+    /**
+     * Get File for this request
+     *
+     * @return FileCollection
+     */
     public function getFile() {
         return $this->fileCollection;
     }
 
+    /**
+     * Get Body for this request
+     *
+     * @return body|string
+     */
     public function getBody() {
         return $this->body;
     }

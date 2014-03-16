@@ -69,7 +69,11 @@ class ParameterCollection extends \ArrayObject {
      * @return array an Array of parameter keys
      */
     public function keys() {
-        return array_keys($this);
+        $keys = [];
+        foreach($this as $key => $value) {
+            $keys[] = $key;
+        }
+        return $keys;
     }
 
     /**
@@ -84,12 +88,19 @@ class ParameterCollection extends \ArrayObject {
     }
 
     /**
-     * Add additional parameters
+     * Add new parameters
      *
-     * @param array $parameters An additional parameters
+     * @param array $parameters
+     * @throws \Exception
      */
     public function addParameters(array $parameters) {
+        foreach($parameters as $key => $value) {
 
-        $this->append($parameters);
+            if(in_array($key, $this->keys())) {
+                throw new \Exception("{$key}. already exists!");
+            }
+
+            $this->add($key, $value);
+        }
     }
 }
