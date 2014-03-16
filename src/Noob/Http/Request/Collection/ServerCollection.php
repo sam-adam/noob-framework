@@ -22,27 +22,20 @@ class ServerCollection extends ParameterCollection {
         $headers = [];
 
         /**
-         * functional substitute for getAllHeaders in apache
-         *
-         * @return array An array of headers information
+         * Get all headers information
          */
-        if(!function_exists('getAllHeaders')) {
-            function getAllHeaders() {
-                $headers = [];
-                foreach($_SERVER as $key => $value) {
-                    if(strpos($key, 'HTTP_') === 0) {
-                        $headers[ucwords(strtolower(substr($key, strpos($key, '_')+1)))] = $value;
-                    }
-                }
-
-                return $headers;
+        static $postHeaders = ['CONTENT_TYPE', 'CONTENT_LENGTH'];
+        foreach($this as $key => $value) {
+            if(strpos($key, 'HTTP_') === 0) {
+                $headers[ucwords(strtolower(substr($key, strpos($key, '_')+1)))] = $value;
+            } elseif(in_array($key, $postHeaders)) {
+                $headers[ucwords(strtolower($key))] = $value;
             }
         }
 
         /**
-         * Check if the user is authorized
-         * will populate from HTTP_AUTHORIZATION
-         *
+         * Get authorization information
+         * Basic or Digest authorization
          */
         if (isset($this['PHP_AUTH_USER'])) {
             $headers['PHP_AUTH_USER'] = $this['PHP_AUTH_USER'];
@@ -69,14 +62,11 @@ class ServerCollection extends ParameterCollection {
 
         if (isset($headers['PHP_AUTH_USER'])) {
             $headers['Authorization'] = self::basic_authorization.' '.base64_encode($headers['PHP_AUTH_USER'].':'.$headers['PHP_AUTH_PW']);
-        } else {
+        } elseif (isset($this['PHP_AUTH_DIGEST'])) {
             $headers['Authorization'] = $this['PHP_AUTH_DIGEST'];
         }
 
-        /**
-         * Merge all headers with authorization information
-         */
-        return getAllHeaders() + $headers;
+        return $headers;
     }
 
 } 
