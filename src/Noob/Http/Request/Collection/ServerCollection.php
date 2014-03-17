@@ -38,8 +38,7 @@ class ServerCollection extends ParameterCollection {
          * Basic or Digest authorization
          */
         if (isset($this['PHP_AUTH_USER'])) {
-            $headers['PHP_AUTH_USER'] = $this['PHP_AUTH_USER'];
-            $headers['PHP_AUTH_PW'] = $this['PHP_AUTH_PW'];
+            list($headers['PHP_AUTH_USER'], $headers['PHP_AUTH_PW']) = array($this['PHP_AUTH_USER'], $this['PHP_AUTH_PW']);
         } else {
             $authorizationHeader = null;
             if (isset($this['HTTP_AUTHORIZATION'])) {
@@ -61,9 +60,9 @@ class ServerCollection extends ParameterCollection {
         }
 
         if (isset($headers['PHP_AUTH_USER'])) {
-            $headers['Authorization'] = self::basic_authorization.' '.base64_encode($headers['PHP_AUTH_USER'].':'.$headers['PHP_AUTH_PW']);
+            $headers['AUTHORIZATION'] = self::basic_authorization.' '.base64_encode($headers['PHP_AUTH_USER'].':'.$headers['PHP_AUTH_PW']);
         } elseif (isset($this['PHP_AUTH_DIGEST'])) {
-            $headers['Authorization'] = $this['PHP_AUTH_DIGEST'];
+            $headers['AUTHORIZATION'] = $this['PHP_AUTH_DIGEST'];
         }
 
         return $headers;
