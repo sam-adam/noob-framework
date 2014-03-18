@@ -25,35 +25,35 @@ class Request {
     const TRACE     = 'TRACE';
     const CONNECT   = 'CONNECT';
 
-    /** @var  httpVersion */
-    protected $httpVersion;
-
     /** @var string */
     protected $method;
 
     /** @var string */
     protected $uri;
 
+    /** @var  httpVersion */
+    protected $httpVersion = 'HTTP/1.1';
+
     /** @var ParameterCollection ($_GET) */
-    protected $queryCollection;
+    protected $queryCollection = [];
 
     /** @var ParameterCollection ($_POST) */
-    protected $postCollection;
+    protected $postCollection = [];
 
     /** @var FileCollection ($_FILES) */
-    protected $fileCollection;
+    protected $fileCollection = [];
 
     /** @var  ParameterCollection ($_COOKIE) */
-    protected $cookieCollection;
+    protected $cookieCollection = [];
 
     /** @var ParameterCollection ($_SERVER) */
-    protected $serverCollection;
+    protected $serverCollection = [];
 
     /** @var  HeaderCollection taken from $_SERVER */
-    protected $headerCollection;
+    protected $headerCollection = [];
 
     /** @var  body */
-    protected $body;
+    protected $body = null;
 
     public function __construct(
         $method,
@@ -126,6 +126,14 @@ class Request {
         return $this->uri;
     }
 
+    public function setVersion($httpVersion) {
+        $this->httpVersion = $httpVersion;
+    }
+
+    public function getVersion() {
+        return $this->httpVersion;
+    }
+
     /**
      * Set the whole query collection for this request
      *
@@ -186,10 +194,21 @@ class Request {
     /**
      * Get Body for this request
      *
-     * @return body|string
+     * @return string
      */
     public function getBody() {
         return $this->body;
+    }
+
+    /**
+     * Set Body for this request
+     *
+     * @param string
+     */
+    public function setBody($body) {
+        if(is_string($body)) {
+            $this->body = $body;
+        }
     }
 
 
@@ -225,8 +244,70 @@ class Request {
         );
     }
 
-    public static function createFromString($url) {
+    public static function createFromString($stringRequest) {
+        $requestCore = explode("\r\n", $stringRequest);
 
+        $matches = null;
+        $methods = implode('|', [
+            Request::OPTIONS,
+            Request::HEAD,
+            Request::GET,
+            Request::POST,
+            Request::PUT,
+            Request::DELETE,
+            Request::TRACE,
+            Request::CONNECT,
+        ]);
+
+        /**
+         * Make sure first line is a valid string
+         */
+        $pattern = '#^(?P<method>'.$methods.')\s(?P<uri>[^ ]*)(?:\sHTTP\/(?P<version>\d+\.\d+){0,1})#';
+        $firstLine = array_shift($requestCore);
+        if(count($requestCore) === 0 || !preg_match($pattern, $firstLine, $matches)) {
+            throw new \InvalidArgumentException('A valid request line was not found in the provided string');
+        }
+
+        $request = new Request($matches['method'], $matches['uri']);
+
+        if(isset($matches['version'])) {
+            $request->setVersion($matches['version']);
+        }
+
+        /**
+         * Extract request lines
+         * separate between header and body
+         */
+        $isHeader = true;
+        $rawHeader = $rawBody = [];
+        while($requestCore) {
+            $nextLine = array_shift($requestCore);
+
+            if($nextLine === '') {
+                $isHeader = false;
+                continue;
+            }
+
+            $isHeader ? ($rawHeader[] = $nextLine) : ($rawBody[] = $nextLine);
+        }
+
+        if($rawHeader = array_shift($rawHeader)) {
+            $headers = [];
+
+            $rawHeader = preg_replace("/\r|\n/", "\r\n", ltrim(rtrim($rawHeader)));
+            $headerList = explode("\r\n", $rawHeader);
+            foreach($headerList as $list) {
+                $exploded = explode(':', $list);
+                $headers[$exploded[0]] = $exploded[1];
+            }
+
+            $request->getHeader()->addParameters($headers);
+        }
+
+        if($rawBody = array_shift($rawBody)) {
+            $request->setBody(ltrim(rtrim($rawBody)));
+        }
+
+        return $request;
     }
-
 }
