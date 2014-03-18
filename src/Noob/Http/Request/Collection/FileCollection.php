@@ -74,8 +74,7 @@ class FileCollection extends ParameterCollection {
             if (sort($keys) == self::$fileKeys) {
                 if (UPLOAD_ERR_NO_FILE == $file['error']) {
                     $file = null;
-                }
-                else {
+                } else {
                     $file = new UploadedFile(
                         $file['tmp_name'],
                         $file['name'],
