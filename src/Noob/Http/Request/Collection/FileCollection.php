@@ -29,7 +29,7 @@ class FileCollection extends ParameterCollection {
      */
     public function replaceCollection(array $files = array()) {
         parent::exchangeArray(array());
-        $this->add($files);
+        $this->addFile($files);
     }
 
     /**
@@ -38,7 +38,7 @@ class FileCollection extends ParameterCollection {
      * @param array $files
      * @return ParameterCollection|void
      */
-    public function add(array $files = array()) {
+    public function addFile(array $files = array()) {
         foreach ($files as $key => $file) {
             $this->set($key, $file);
         }
