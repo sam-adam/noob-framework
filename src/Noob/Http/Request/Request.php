@@ -84,8 +84,6 @@ class Request {
 
     /**
      * Return the method of this request
-     * or
-     * Method from setMethod
      *
      * @return string
      */
