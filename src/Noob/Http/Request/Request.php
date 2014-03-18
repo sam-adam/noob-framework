@@ -81,16 +81,6 @@ class Request {
             $this->body = file_get_contents('php://input');
         }
     }
-
-    /**
-     * Return the method of this request
-     *
-     * @return string
-     */
-    public function getMethod() {
-        return $this->method;
-    }
-
     /**
      * Set the method of this request
      *
@@ -111,6 +101,15 @@ class Request {
     }
 
     /**
+     * Return the method of this request
+     *
+     * @return string
+     */
+    public function getMethod() {
+        return $this->method;
+    }
+
+    /**
      * @param $uri Set uri string
      */
     public function setUri($uri) {
@@ -124,10 +123,20 @@ class Request {
         return $this->uri;
     }
 
+    /**
+     * Set http version
+     *
+     * @param string $httpVersion
+     */
     public function setVersion($httpVersion) {
         $this->httpVersion = $httpVersion;
     }
 
+    /**
+     * Get http version
+     *
+     * @return httpVersion|string
+     */
     public function getVersion() {
         return $this->httpVersion;
     }
@@ -154,6 +163,15 @@ class Request {
     }
 
     /**
+     * Set header for this request
+     *
+     * @param HeaderCollection $header
+     */
+    public function setHeader(HeaderCollection $header) {
+        $this->headerCollection = $header;
+    }
+
+    /**
      * Get Header for this request
      *
      * @return HeaderCollection
@@ -163,12 +181,30 @@ class Request {
     }
 
     /**
+     * Set post for this request
+     *
+     * @param ParameterCollection $post
+     */
+    public function setPost(ParameterCollection $post) {
+        $this->postCollection = $post;
+    }
+
+    /**
      * Get Post for this request
      *
      * @return ParameterCollection
      */
     public function getPost() {
         return $this->postCollection;
+    }
+
+    /**
+     * Set cookie for this request
+     *
+     * @param ParameterCollection $cookie
+     */
+    public function setCookie(ParameterCollection $cookie) {
+        $this->cookieCollection = $cookie;
     }
 
     /**
@@ -208,7 +244,6 @@ class Request {
             $this->body = $body;
         }
     }
-
 
     /**
      * @return bool Check if the request is ajax
