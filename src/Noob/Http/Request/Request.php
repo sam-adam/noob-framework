@@ -277,22 +277,22 @@ class Request {
          * separate between header and body
          */
         $isHeader = true;
-        $rawHeader = $rawBody = [];
+        $rawHeader = $rawBody = null;
         while($requestCore) {
-            $nextLine = array_shift($requestCore);
+            $nextLine = ltrim(rtrim(array_shift($requestCore)));
 
             if($nextLine === '') {
                 $isHeader = false;
                 continue;
             }
 
-            $isHeader ? ($rawHeader[] = $nextLine) : ($rawBody[] = $nextLine);
+            $isHeader ? ($rawHeader = $nextLine) : ($rawBody = $nextLine);
         }
 
-        if($rawHeader = array_shift($rawHeader)) {
+        if($rawHeader) {
             $headers = [];
 
-            $rawHeader = preg_replace("/\r|\n/", "\r\n", ltrim(rtrim($rawHeader)));
+            $rawHeader = preg_replace("/\r|\n/", "\r\n", $rawHeader);
             $headerList = explode("\r\n", $rawHeader);
             foreach($headerList as $list) {
                 $exploded = explode(':', $list);
@@ -302,8 +302,8 @@ class Request {
             $request->getHeader()->addParameters($headers);
         }
 
-        if($rawBody = array_shift($rawBody)) {
-            $request->setBody(ltrim(rtrim($rawBody)));
+        if($rawBody) {
+            $request->setBody($rawBody);
         }
 
         return $request;
