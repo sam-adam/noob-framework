@@ -158,35 +158,20 @@ class Request {
      *
      * @return ParameterCollection
      */
-    public function getQuery() {
+    public function getQueries  () {
         return $this->queryCollection;
-    }
-
-    /**
-     * Set header for this request
-     *
-     * @param HeaderCollection $header
-     */
-    public function setHeader(HeaderCollection $header) {
-        $this->headerCollection = $header;
-    }
-
-    /**
-     * Get Header for this request
-     *
-     * @return HeaderCollection
-     */
-    public function getHeader() {
-        return $this->headerCollection;
     }
 
     /**
      * Set post for this request
      *
      * @param ParameterCollection $post
+     * @return $this
      */
     public function setPost(ParameterCollection $post) {
         $this->postCollection = $post;
+
+        return $this;
     }
 
     /**
@@ -194,7 +179,7 @@ class Request {
      *
      * @return ParameterCollection
      */
-    public function getPost() {
+    public function getPosts() {
         return $this->postCollection;
     }
 
@@ -202,9 +187,12 @@ class Request {
      * Set cookie for this request
      *
      * @param ParameterCollection $cookie
+     * @return $this
      */
     public function setCookie(ParameterCollection $cookie) {
         $this->cookieCollection = $cookie;
+
+        return $this;
     }
 
     /**
@@ -212,8 +200,20 @@ class Request {
      *
      * @return ParameterCollection
      */
-    public function getCookie() {
+    public function getCookies() {
         return $this->cookieCollection;
+    }
+
+    /**
+     * Set File for this request
+     *
+     * @param FileCollection $file
+     * @return $this
+     */
+    public function setFile(FileCollection $file) {
+        $this->fileCollection = $file;
+
+        return $this;
     }
 
     /**
@@ -221,17 +221,29 @@ class Request {
      *
      * @return FileCollection
      */
-    public function getFile() {
+    public function getFiles() {
         return $this->fileCollection;
     }
 
     /**
-     * Get Body for this request
+     * Set header for this request
      *
-     * @return string
+     * @param HeaderCollection $header
+     * @return $this
      */
-    public function getBody() {
-        return $this->body;
+    public function setHeader(HeaderCollection $header) {
+        $this->headerCollection = $header;
+
+        return $this;
+    }
+
+    /**
+     * Get Header for this request
+     *
+     * @return HeaderCollection
+     */
+    public function getHeaders() {
+        return $this->headerCollection;
     }
 
     /**
@@ -243,6 +255,15 @@ class Request {
         if(is_string($body)) {
             $this->body = $body;
         }
+    }
+
+    /**
+     * Get Body for this request
+     *
+     * @return string
+     */
+    public function getBody() {
+        return $this->body;
     }
 
     /**
@@ -263,7 +284,7 @@ class Request {
     public static function createFromGlobals() {
         $httpVersion = 'HTTP/1.1';
         $method = $_SERVER['REQUEST_METHOD'];
-        $uri = '/';
+        $uri = $_SERVER['REQUEST_URI'];
 
         return new Request(
             $method,
@@ -343,4 +364,5 @@ class Request {
 
         return $request;
     }
+
 }
