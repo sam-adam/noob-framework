@@ -316,7 +316,7 @@ class Request {
         /**
          * Make sure first line is a valid string
          */
-        $pattern = '#^(?P<method>'.$methods.')\s(?P<uri>[^ ]*)(?:\sHTTP\/(?P<version>\d+\.\d+){0,1})#';
+        $pattern = '#^(?P<method>'.$methods.')\s(?P<uri>[^ ]*)(?P<version>\s(HTTP|HTTPS)\/(\d+\.\d+){0,1})#';
         $firstLine = array_shift($requestCore);
         if(count($requestCore) === 0 || !preg_match($pattern, $firstLine, $matches)) {
             throw new \InvalidArgumentException('A valid request line was not found in the provided string');
