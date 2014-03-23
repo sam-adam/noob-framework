@@ -66,7 +66,7 @@ class Request {
         array $server = []) {
         $this->httpVersion = $httpVersion;
         $this->method = $method;
-        $this->uri = $uri;
+        $this->uri = ($pos = stripos($uri, '?')) ? substr($uri, 0, $pos) : $uri;
 
         $this->queryCollection = new ParameterCollection($query);
         $this->postCollection = new ParameterCollection($post);
@@ -75,9 +75,9 @@ class Request {
         $this->serverCollection = new ServerCollection($server);
         $this->headerCollection = new HeaderCollection($this->serverCollection->getHeaders());
 
-        if ($this->getMethod() === Request::POST
+        if ($this->method === Request::POST
             ||
-            $this->getMethod() === Request::PUT) {
+            $this->method === Request::PUT) {
             $this->body = file_get_contents('php://input');
         }
     }
@@ -355,7 +355,7 @@ class Request {
                 $headers[$exploded[0]] = $exploded[1];
             }
 
-            $request->getHeader()->addParameters($headers);
+            $request->getHeaders()->addParameters($headers);
         }
 
         if($rawBody) {
