@@ -25,35 +25,35 @@ class Request {
     const TRACE     = 'TRACE';
     const CONNECT   = 'CONNECT';
 
-    /** @var string */
+    /** @var string Request method */
     protected $method;
 
-    /** @var string */
+    /** @var string Request Uri */
     protected $uri;
 
     /** @var  httpVersion */
-    protected $httpVersion = 'HTTP/1.1';
+    protected $httpVersion;
 
     /** @var ParameterCollection ($_GET) */
-    protected $queryCollection = [];
+    protected $queryCollection;
 
     /** @var ParameterCollection ($_POST) */
-    protected $postCollection = [];
+    protected $postCollection;
 
     /** @var FileCollection ($_FILES) */
-    protected $fileCollection = [];
+    protected $fileCollection;
 
     /** @var  ParameterCollection ($_COOKIE) */
-    protected $cookieCollection = [];
+    protected $cookieCollection;
 
     /** @var ParameterCollection ($_SERVER) */
-    protected $serverCollection = [];
+    protected $serverCollection;
 
     /** @var  HeaderCollection taken from $_SERVER */
-    protected $headerCollection = [];
+    protected $headerCollection;
 
-    /** @var  body */
-    protected $body = null;
+    /** @var  body PUT or POST content */
+    protected $body;
 
     public function __construct(
         $method,
