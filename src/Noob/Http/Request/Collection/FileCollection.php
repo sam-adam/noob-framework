@@ -8,6 +8,7 @@
 
 namespace Noob\Http\Request\Collection;
 
+use Noob\Core\Form;
 use Noob\Http\File\UploadedFile;
 
 /**
@@ -29,7 +30,7 @@ class FileCollection extends ParameterCollection {
      */
     public function replaceCollection(array $files = array()) {
         parent::exchangeArray(array());
-        $this->addFile($files);
+        $this->addFile(FileNormalizer::Normalize($files));
     }
 
     /**
@@ -68,24 +69,20 @@ class FileCollection extends ParameterCollection {
     protected function convertToUploadedFile($file) {
         if ($file instanceof UploadedFile) return $file;
 
-        if (is_array($file)) {
-            $keys = array_keys($file);
+        $keys = array_keys($file);
 
-            if (sort($keys) == self::$fileKeys) {
-                if (UPLOAD_ERR_NO_FILE == $file['error']) {
-                    $file = null;
-                } else {
-                    $file = new UploadedFile(
-                        $file['tmp_name'],
-                        $file['name'],
-                        $file['type'],
-                        $file['size'],
-                        $file['error']
-                    );
-                }
+        if (sort($keys) == self::$fileKeys) {
+            if (UPLOAD_ERR_NO_FILE == $file['error']) {
+                $file = null;
+            } else {
+                $file = new UploadedFile(
+                    $file['tmp_name'],
+                    $file['name'],
+                    $file['type'],
+                    $file['size'],
+                    $file['error']
+                );
             }
-        } else {
-            $file = array_walk($file, array($this, 'convertToUploadedFile'));
         }
 
         return $file;
